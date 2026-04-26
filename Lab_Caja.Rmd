@@ -1,0 +1,124 @@
+---
+title: "MEDIDAS DE FORMA"
+author: "Fernando Ponce"
+date: "2026-04-23"
+output: html_document
+---
+Esto se qeuda. supongo para que GENERE el HTML
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+ colocas <br> para separrrr
+TEMA: MEDIDAS DE POSICIÓN Y FORMA
+
+1. Descripción del problema
+En el siguiente conjunto de números, se proporcionan los pesos (redondeados a la libra más
+próxima) de los bebes nacidos durante un cierto intervalo de tiempo en un hospital: 4, 8, 4, 6, 8, 6,
+7, 7, 7, 8, 10, 9, 7, 6, 10, 8, 5, 9, 6, 3, 7, 6, 4, 7, 6, 9, 7, 4, 7, 6, 8, 8, 9, 11, 8, 7, 10, 8, 5, 7, 7, 6, 5,
+10, 8, 9, 7, 5, 6, 5.<br>
+a. Encontrar el percentil 34, el decil 7, y cuartil 3 y sus interpretaciones.<br>
+b. ¿Es esta una distribución sesgada? ¿De ser así en qué dirección?<br>
+c. ¿Qué tipo de deformación vertical presenta?<br>
+d. Hacer el diagrama de cajas e interpretar los resultados.<br>
+
+<br>
+SOLUCIÓN:<br>
+
+a. Encontrar el percentil 34, el decil 7, y cuartil 3 y sus interpretaciones.<br>
+
+
+```{r}
+# Medidas de forma
+x<-c(4,8,4,6,8,6,7,7,7,8,10,9,7,6,10,8,5,9,6,3,7,6,4,7,6,9,7,4,7,6,8,8,9,11,8,7,
+10,8,5,7,7,6,5,10,8,9,7,5,6,5)
+
+#Medidas de Posicion
+quantile(x,prob = c(0.34,0.07,0.75))
+
+```
+Interpretaciones:<br>
+-------------------------<br>
+
+ BLABLALBLBALALBLALBALABLLBAL<br>
+------------------------<br>
+
+b. ¿Es esta una distribución sesgada? ¿De ser así en qué dirección?<br>
+
+```{r}
+#Medidas de forma
+library(psych)
+#Asimetria
+skew(x, na.rm = TRUE,type=3)
+
+```
+--------------------------------------------
+INTERPRETACION: 
+El peso de los recien nacidos en el hospital tiene una distribucion simetrica, esto debido a la simetria. skew = 0.
+
+
+-------------------------------------------
+
+
+c. ¿Qué tipo de deformación vertical presenta?
+```{r}
+#Kurtosis FISHER... 0
+kurtosi(x, na.rm = TRUE,type=3)
+```
+--------------------------------------------
+INTERPRETACION: 
+Los pesos de los recien nacidos presentan una deformacion platicurtica, esto debido a que la kurtosis es < 0
+-------------------------------------------
+
+
+d. Hacer el diagrama de cajas e interpretar los resultados.
+
+```{r}
+# Diagrama de caja
+boxplot(x, horizontal = TRUE, col = "green",border = "black", main="Pesos de bebes recién nacidos",
+        xlab = "Pesos en Libras")
+```
+
+--------------------------
+INTEPRETACIONES:
+Mediana: Distribucion Simetrica.
+Bigotes: Sesgo simetrica.
+Rango Intercuartilico. Q1 Q3. la caj tiene el 50% de datos, los bigotes podrian tener 25% 25%.
+Rango intercuartilo tal cual es mas homogeneo. Si fuera desnivelado seria Heterogeneo.
+
+Medida de forma: Simetrica (guiandome por la mediana)
+
+---------------------------
+
+
+
+
+####################################################################################
+
+JEMPLO 2
+ 1. Descripción del problema
+Los datos que se presentan a continuación corresponden a las notas de matemática de tres
+secciones:
+Compare la dispersión, el mejor rendimiento académico de las notas de las tres secciones en un
+diagrama de cajas.
+
+
+
+```{r}
+# Notas
+A<-c(10,8,12,11,13,12,8,10,8,12,11,13,12,8,10,11)
+B<-c(10,11,12,13,14,13,14,12,10,11,12,13,14,13,14,12)
+C<-c(11,10,13,16,18,10,15,16,19,20,18,17,15,13,12,14)
+
+# Diagrama de cajas
+boxplot(A,B,C,horizontal = TRUE,
+        border = "black", col = c("red", "blue", "green", "yellow", "purple"), main="Notas de 3 secciones", xlab = "Puntos", ylab= "Secciones", names=c("A", "B", "C"))
+
+```
+
+
+
+
+
+

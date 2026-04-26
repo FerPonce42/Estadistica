@@ -1,0 +1,40 @@
+---
+title: "adsdasdasdasdasd"
+author: "Fernando Ponce"
+date: "2026-04-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+
+#BASE DA DATOS 
+library(openxlsx)
+datos<-read.xlsx(file.choose(), sheet="aeusp")
+
+#Temposp
+Temposp = datos[,7]
+Temposp
+
+```
+
+
+
+```{r}
+
+library(psych)
+describe(Temposp)
+
+# Diagrama de caja
+boxplot(Temposp,
+        horizontal = TRUE,
+        col = "green",
+        border = "black",
+        main = "Tiempo de residencia en São Paulo, en años.",
+        xlab = "Número de años")
+```
+
