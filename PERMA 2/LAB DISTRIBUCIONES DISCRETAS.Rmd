@@ -1,0 +1,184 @@
+---
+title: "LAB de DISTRIBUCIONES DISCRETAS"
+author: "Fernando Ponce"
+date: "2026-05-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+EJEMPLO 1: 
+
+Ejemplo5:
+Si deseisasietede la tardeseadmitequeunnúmerode teléfonodecadacincoestá
+comunicando,¿cuáles laprobabilidaddeque,cuandosemarquen10númerosdeteléfono
+elegidosalazar,sólocomuniquendos?
+
+
+a) Identificar la variable X, tipo de distruccion discreta y demás datos en el texto:
+
+
+X: Número de comunicaciones 
+X-> B(n,p)
+p = 0.2
+q = 0.8 
+n = 10
+
+b) Cual es la probabilidad de que, cuando se marquen 10 numeros de telefono elgeidos al azar, solo comuniquen 2?
+
+```{r}
+
+#P(X=2)
+
+dbinom (2,10,0.2)
+
+```
+
+EJEMPLO 2: 
+1.Una maquina llena de cajas de palillos de fosforo.En una porción del 10% la maquina no llena las cajas por completo. Se toman al azar 25 cajas de fosforo.
+
+a) Defina/ Identifique a la variable.
+
+X = "Número de cajas de fósforo incompletas"
+X-> B(n,p)
+p = 0.1
+q = 0.9
+n = 25
+
+
+b) Calcule la probabilidad de que no haya más de 2 cajas incompletas.
+```{r}
+#P(X<=2) se usa pbinom CUANDO ES MENOR IGUAL
+
+pbinom(2,25,0.1)
+```
+
+EJEMPLO 3: 
+2. Un estudiante de Arquitectura tiene la certeza de aprobar una asignatura con probabilida 0.8. Si lleva 6 asignaturas, calcular:
+
+a) Cual es la probabilidad de que salga mal en todas las asignaturas?
+
+X = "Número de asignaturas aprobadas"
+X-> B(n,p)
+p = 0.8
+q = 0.1
+n = 6
+
+P(X=0)
+
+```{r}
+dbinom(0, 6 , 0.8)
+```
+
+b) Cual es la probabilidad de que apruebe menos de 2 asignaturas o más de 4 asignaturas?
+version ejercicio = version pero convertida en código para que cuadre
+P(X<2) + P(X>4) = P(X <= 1) + 1-P(X<=4)
+```{r}
+
+pbinom(1,6, 0.8) + 1 - pbinom(4, 6 , 0.8)
+
+```
+
+c) Cual es la probabilidad de que apruebe exactamente 2 asignaturas, sabiendo que al menos aprueba una asignatura?
+
+P( (X = 2) / P(X >= 1) ) --> Como nosotros no tenemos mayor igual en codigo. Aqui tenemos que alocarnos.
+Trabaja con el complemento
+P(X = 2) / P(X >= 1) = P(X=2) / (1-P(X=0))
+
+```{r}
+
+dbinom(2,6, 0.8) / (1 - dbinom(0, 6 , 0.8))
+```
+
+============================================================================================================================================
+
+
+DISTRUBUCION GEOMETRICA (NUEVO TEMITA)
+
+
+EJEMPLO 1:
+Cuando se graba un comercial de tv la probabilidad de que un actor recite correctamente el dialogo 
+de su toma es de 0.3. 
+
+a) Identifica la variable:
+
+X = "Número de intentos hasta que recite correctamente"
+X-> Geo()
+p = 0.3
+q = 0.7
+r = 6
+
+P[X=x] = p * q^(x-1)
+PD: Aprende a interpretar esperanza y varianza. Como estamos en Variable Discreta, redondea tus resultados ejem: 3.33 = 3
+7.78 = 
+La desviacion respecto a la medio es grande, eso indica que el numero de recitaciones es disperso.
+
+b) ¿Cuál es la probabilidad que el actor recite correctamente su dialogo en la 6ta vez, además calcule su esperanza y desviación estándar?
+
+```{r}
+
+# P(X=6   x = intentos - 1 para que funcione)
+dgeom(5, 0.3)
+```
+
+LA ESPERANZA:
+```{r}
+Esperanza<-1 / 0.3
+Esperanza
+
+Varianza<- 0.7 / (0.3^2)
+Varianza
+
+Desviacion<- sqrt(Varianza)
+Desviacion
+```
+
+
+
+
+
+
+
+
+
+EJEMPLO 2: 
+Una preuba de resistencia...blalalbalbl
+
+a) Cual es la distrubucion de X?
+
+X: Numeoro de pruebas realizadas hasta obtener la primera ruptura de viga
+X-> geom(p)
+
+b) Calcule de que ocurra una ruptura viga antes de la tercera prueba.
+```{r}
+#Segun la teoria aqui aplicamos lo que ocurresponde cuando es < = usamos el pgeom
+#P(X<3) = P(X < = 1 )   x = intentos - 1
+
+pgeom(1,0.2)
+
+```
+
+
+EJEMPLO 3:
+ un equipo d e desarroladores esta probando un sistema de reconocimineto facila que utiliza inteligencia artificial, cada vez que el s...
+ 
+ a)
+ 
+ 
+ P(E) = 0.2
+ 
+ b)
+```{python}
+#P(x = 2   /   X<=3 )   =    P(X <= 3)        x=intentos-1
+
+dgeom(1, 0.2) / pgeom(2, 0.2)
+```
+
+
+
+
+ c)
+PROXIMO LAB DSITRRIBUCIONES DISCRETAS Y CONTINUAS
