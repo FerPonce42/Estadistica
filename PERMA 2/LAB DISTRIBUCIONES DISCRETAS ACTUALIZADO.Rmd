@@ -274,3 +274,93 @@ detenga?
 1 - pnbinom(6 - 4, 4, 0.1)
 ```
 
+
+
+
+===============================================
+
+POISSON
+
+EJEMPLO 1:
+Suponga que en forma aleatoria se realiza una serie de llamadas a una central de 
+telefónica con un promedio de tres llamadas por minuto
+a) Calcular la probabilidad de que en el periodo de un minuto,
+▪ No ocurran llamada alguna 
+
+```{r}
+#P(X=0)
+#  dpois( x, lambda = 3)
+#CON LA IGUALDAD DIRECTMAENT TRABAJAS CON EL dpois
+dpois(0,3)
+```
+
+
+
+▪ Ocurra al menos 4 llamadas. 
+
+
+```{r}
+# P(X > = 4), como no tenemos en ninguna distruvicion los mayor igual tenemos que adaptarlo. Porl o teanto manejamos completonos
+#1 - P(X < 4 )  =   1 - P(X < = 3) <--- trabajaras con eso.
+# PPOIS PARA LO QUE SEA MENOR IGUAL
+1 - ppois(3,3)
+```
+
+
+b) Si cada llamada cuesta s/. 0.50; ¿Cuánto es el costo esperado por llamada?
+
+```{r}
+# C(X) = 0.5 * E(X)
+# E(X) = lamda = 3
+
+C <- 0.5 * 3
+C
+```
+
+
+
+EJEMPLO 2 (con alteracion):
+
+El promedio de llamadas que recibe una central telefónica en un minuto es de 1.5, halle la probabilidad de 
+que en 4 minutos se reciban: 
+
+Definamos: 
+X ="Número de llamadas en 4 minutos"
+
+𝜆=1,5[𝑙𝑙𝑎𝑚𝑎𝑑𝑎𝑠/𝑚𝑖𝑛𝑢𝑡𝑜]
+ 
+ 
+a) 3 llamadas
+
+```{r}
+
+#COMO EL TIEMPO CAMBIA YA QUE ANTES ERA UN MINUTO AHORA NOS PIDE 4 MIN
+dpois(3, 1.5 * 4)
+```
+
+
+b) Menos de 3 llamadas
+
+```{r}
+#P(X < 3), ADAPTALO!!
+
+#P(X <3) = P(X <  = 2)
+
+ppois(2, 1.5 * 4)
+```
+
+
+c) No menos de 4 y no más de 7
+```{r}
+#P(4 < = X < = 7 )  =  P(X < = 7)  - P (X < 4) pero como nosotros no trabajamos con menor y trabaamos con igualdad. entonces
+
+#  P(X < = 7)  - P (X < =  3)
+
+ppois(7, 1.5*4) - ppois(3, 1.5*4)
+```
+
+SOLO TENEMOS 4 DISTRIBUCIONES DE PROBABILIDAD PARA LOS LABORATORIOS.
+HIPERGEOMETRICA NO EXISTE AQUI.
+
+
+
