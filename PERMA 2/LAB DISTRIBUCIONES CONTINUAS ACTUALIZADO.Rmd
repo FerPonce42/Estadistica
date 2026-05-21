@@ -1,0 +1,48 @@
+---
+title: "DISTRIBUCIONES CONTINUAS"
+author: "Fernando Ponce"
+date: "2026-05-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+==============================================================================
+
+DISTRIBUCION UNIFORME:
+
+EJEMPLO 1:
+
+
+Sea X una v.a. continua que tiene una distribución uniforme en el intervalo [1,5; 5,5] 
+
+
+a) ¿Cual es P[X < 2,5].
+```{r}
+
+# P (X < 2,5) como es menor o menor igual no hay problema
+punif(2, min = 1.5, max = 5.5)
+```
+
+
+a) Determine la media, la varianza y la desviación estándar de X.
+
+```{r}
+
+
+esperanza <- (1.5 + 5.5) / 2 
+
+esperanza
+
+varianza <- (5.5 - 1.5)^2 / 12
+
+varianza
+
+
+sd <- sqrt(varianza)
+sd
+```
+
+
