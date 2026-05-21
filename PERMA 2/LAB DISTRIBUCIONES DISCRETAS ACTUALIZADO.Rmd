@@ -171,7 +171,7 @@ EJEMPLO 3:
  P(E) = 0.2
  
  b)
-```{python}
+```{r}
 #P(x = 2   /   X<=3 )   =    P(X <= 3)        x=intentos-1
 
 dgeom(1, 0.2) / pgeom(2, 0.2)
@@ -181,4 +181,96 @@ dgeom(1, 0.2) / pgeom(2, 0.2)
 
 
  c)
-PROXIMO LAB DSITRRIBUCIONES DISCRETAS Y CONTINUAS
+ 
+ 
+ 
+ 
+ ==================================================
+ 
+ 
+ PASCAL:
+ 
+ EJEMPLO 1:
+ 
+ De un grupo de 50 esquizofrénicos, 12 padecen alteraciones cerebrales. calcule la
+probabilidaddequepadezcantalalteración:
+
+
+```{r}
+# Parámetros de la distribución Pascal 
+r <- 1    # Número de éxitos requeridos 
+p <- 0.24 # Probabilidad de éxito en cada ensayo 
+x <- 8    # Número de ensayos 
+```
+
+prob <- dnbinom(x - r, size = r, prob = p) 
+print(prob) 
+
+USAR ESE CODIGO CUANDO SE TRATE DE UNA IGUALDAD
+
+a)elprimeroconalteracióncerebralseencuentreenlaoctavaconsultadehistoriales.
+
+
+```{r}
+#P(X=8)
+
+prob <- dnbinom(8 - 1, 1 , 0.24) 
+print(prob) 
+```
+
+
+
+b)elterceroconalteracióncerebralseencuentreenladécimaconsultadehistoriales.
+
+```{r}
+
+#P(X=10)
+
+prob <- dnbinom(10 - 3, 3 , 0.24) 
+print(prob)
+```
+
+
+
+
+
+
+EJEMPLO 2:
+
+
+Una máquina produce artículos de uno en uno y de manera independiente. Se considera que el 10% 
+de ellos son defectuosos. Si la máquina se detiene apenas produce el cuarto artículo defectuoso: 
+a) ¿Cuál es el número esperado de artículo producidos hasta que se detiene la máquina?
+
+r=4
+p=0.1
+
+```{r}
+esperanza = 4 / 0.1
+
+esperanza
+```
+
+
+
+b) ¿Cuál es la probabilidad de que la máquina se detenga en el décimo artículo producido? 
+```{r}
+#P(X=10)
+
+#dnbinom(x - r, size = r, prob = p)
+dnbinom(10-4, 4, 0.1)
+```
+
+
+
+c) ¿Cuál es la probabilidad de que produzca al menos 7 artículos antes que la máquina se 
+detenga? 
+
+```{r}
+#al menos para nosotros es como minimo osea > = pero nosotros no tenemos mayor o igual. entonces en una distribucion pascal como va la variable? va desde r en adelante. ya.... entonces aqui nuestro R seria 4. de 4 en adelante, 4..5...6.. y blablala
+
+#P(X > = 7)  = 1 - P(X < 7)  = 1 - P(X <  =  6) con eso tendrias que trabajar.
+#PARA MENOR O IGUAL
+1 - pnbinom(6 - 4, 4, 0.1)
+```
+
