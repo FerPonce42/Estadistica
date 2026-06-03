@@ -45,4 +45,83 @@ sd <- sqrt(varianza)
 sd
 ```
 
+Ejemplo 2
 
+```{r}
+#P[12<X<12.05] = P[X<12.05] = P[]
+punif(12.05, min = 11.975, max = 12.1) - punif(12, min = 11.975, max = 12.1)
+```
+
+b) ¿De que el contenido de la botella sea 11.99 onzas o más?
+
+```{r}
+#P[X>11.99]=1-P[X<=11.99]
+1 - punif(11.99, min = 11.975, max = 12.1)
+
+```
+
+2. DISTRIBUCION EXPONENCIAL
+
+EJEMPLO 1. El tiempo de vida, en horas
+
+```{r}
+#P[X<=600]
+pexp(600, rate = 1/500)
+```
+
+b) ¿Cual es la probabilidad de que el producto dure nas que su media?
+
+```{r}
+#P[X>500]=1-P(X<=500)
+1-pexp(500, rate = 1/500)
+
+```
+
+C) varianza de la variable
+
+```{r}
+#V(x) = 1/β2
+Var <- 1/(1/500)^2
+Var
+```
+
+3. DISTRIBUCION NORMAL
+
+EJEMPLO 1. En la ciudad de Arequipa la presión sanguínea sistólica media de hombres con edades de 20 a 24 años es de
+123 mm Hg con una desviación estándar de 137 mm Hg; además la presión sanguínea se distribuye
+normalmente. Si se selecciona al zar uno de estos hombres ¿Cuál es la probabilidad de que su presión
+sanguínea sea:
+
+a) …mayores que 139.44 mm Hg?
+
+```{r}
+#P[X>139.44]=1-P(X<=139.44)
+1-pnorm (139.44, mean = 123, sd= 137)
+1-pnorm (0.120, mean = 0, sd= 1)
+1-pnorm (0.120, mean = 0, sd= 1) #estandarizado y no estadanrizado
+1-pnorm(0.120)
+```
+
+b) …menores que 109 mm Hg?
+
+```{r}
+#P(X<109)=P(Z<)
+pnorm (-0.102)
+```
+
+EJEMPLO 2. Suponga que el ingreso familiar mensual en una comunidad tiene una distribución normal con media $600 y desviación estandar $100.
+
+a) Calcular la probabilidad de que el ingreso de una familia escogida al azar sea menos a $400
+
+```{r}
+#P(X<400)=P(Z<=2)
+pnorm(-2)
+```
+
+b) Si el 5% de las familias
+
+```{r}
+#b) Ingreso_familiar: (k−600) /100= 1,645
+k<- (100*1.645)+600
+k
+```
