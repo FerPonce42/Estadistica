@@ -1,0 +1,244 @@
+---
+title: "PRACTICADISCRETAYCONTINUA"
+author: "Fernando Ponce y Maricielo Luna"
+date: "2026-06-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+=========================================================<br>
+
+1. En una empresa de mantenimiento industrial se inspeccionan 14 motores eléctricos<br>
+seleccionados aleatoriamente de una línea de producción. Se sabe que la probabilidad<br>
+de que un motor requiera ajuste técnico es de 0.35. Además, se asume que los<br> 
+resultados de las inspecciones son independientes.<br> 
+a) Defina la variable aleatoria y describa la función de probabilidad. <br>
+
+X = "Número de motores que requieren ajuste técnico"<br>
+
+X ~ B(n,p)<br>
+
+P(X = x) = (14 C x) * (0.35)^x * (0.65)^(14-x) ,   x = 0, 1,... , n<br>
+
+p = 0.35<br>
+
+q = 0.65<br>
+
+n = 14<br>
+
+
+b) Calcule la probabilidad de 4 a 8 motores requieran ajuste técnico. <br>
+
+```{r}
+#P(4<=X<=8)
+#P(X<=8)-P(X<=3)
+
+pbinom(8,14,0.35) - pbinom(3,14,0.35)
+```
+
+c) Calcule la probabilidad de que al menos 5 motores requieran ajuste técnico.<br>
+
+```{r}
+#P(X>=5)
+#1-P(X<=4)
+
+1-pbinom(4,14,0.35)
+```
+<br>
+<br>
+=========================================================
+<br>
+<br>
+2. Un equipo de desarrollo está probando un nuevo módulo de software. La probabilidad <br>
+de encontrar un error crítico en una prueba individual es 0.2. Las pruebas se realizan <br>
+de manera secuencial hasta detectar el primer error crítico.<br>
+
+a) ¿Cuál es la probabilidad de que el primer error crítico se encuentre en la segunda <br>
+prueba? <br>
+
+X = "Número de pruebas hasta encontrar el primer error crítico"<br>
+
+X ~ Geo(0.2)<br>
+
+P(X=x) = (0.2)*(0.8)^(x-1) , x = 1,2, ...<br>
+
+p = 0.2<br>
+
+q = 0.8<br>
+
+```{r}
+#P(X=2)
+#x=intentos-1
+
+dgeom(1,0.2)
+```
+
+b) ¿Cuál es la probabilidad de que se necesiten al menos 3 pruebas para encontrar<br> 
+un error crítico? <br>
+
+```{r}
+#P(X>=3)
+#1-P(X<=2)
+#x=intentos-1
+
+1-pgeom(1,0.2)
+```
+<br>
+<br>
+=========================================================
+<br>
+<br>
+3. En un centro de distribución de productos farmacéuticos, el número de pedidos con <br>
+errores de despacho por cada 200 órdenes procesadas sigue una distribución de <br>
+Poisson. La empresa ha estimado que, en promedio, ocurren 4 errores por cada 200 <br>
+órdenes. <br>
+
+a) Defina la variable aleatoria, indique su tipo y escriba la función de probabilidad.<br>
+
+X = "Número de errores de despacho en 200 órdenes"<br>
+
+X ~ Poisson(λ)<br>
+
+p(x) = P(X = x) = (e^(-4)  *  4^x)/(x!) , x=0,1,2,3,4,.. <br>
+
+λ = 4<br>
+
+b) Determine la probabilidad de que ocurran más de 1 error, pero a lo más 5 errores en <br>
+200 órdenes procesadas. <br>
+
+```{r}
+#P(1<X<=5)
+#P(X<=5)-P(X<=1)
+
+ppois(5,4)-ppois(1,4)
+```
+
+c) Calcule la probabilidad de que al menos ocurran 3 errores en 120 órdenes procesadas.<br>
+
+```{r}
+#λ=4 errores cada 200 ordenes
+
+lambda <- 4*(120/200)
+
+#P(X>=3)
+#1-P(X<=2)
+
+1-ppois(2,lambda)
+```
+<br>
+<br>
+=========================================================
+<br>
+<br>
+4. En una planta agroindustrial dedicada al envasado de néctares, el área de mantenimiento <br>
+ha observado que el tiempo de funcionamiento continuo de una máquina selladora <br>
+automática hasta presentar una falla mecánica sigue aproximadamente una distribución<br> 
+exponencial. Según los registros históricos, la máquina funciona en promedio 90 horas <br>
+antes de requerir una reparación correctiva. Sea X la variable aleatoria que representa <br>
+el tiempo de funcionamiento continuo de la máquina selladora automática, en horas, <br>
+hasta presentar una falla. Con base en esta información, responda: <br>
+
+Media = 90 horas<br>
+
+β = 1/90<br>
+
+a) ¿Qué porcentaje de máquinas selladoras funcionarán más de 120 horas sin presentar<br> 
+fallas? <br>
+
+```{r}
+#P(X>120)=1-P(X<=120)
+
+1-pexp(120,rate=1/90)
+```
+
+b) ¿Qué porcentaje de máquinas tendrán una duración entre 60 y 100 horas antes de<br> 
+presentar una falla? <br>
+
+```{r}
+#P(60<X<100)
+
+pexp(100,rate=1/90)-pexp(60,rate=1/90)
+```
+
+c) Determine el tiempo esperado de funcionamiento y la desviación estándar, e interprete<br> 
+ambos resultados en el contexto del mantenimiento industrial. <br>
+
+
+INTERPRETACION: <br>
+
+Media (tiempo esperado) El tiempo promedio de funcionamiento de la máquina antes de presentar una falla es de 90 horas esto indica que en general cada<br> máquina opera alrededor de ese tiempo antes de requerir mantenimiento.<br>
+Desviación estándar: La desviación estándar es de 90 horas y representa cuánto se alejan los tiempos de funcionamiento respecto al promedio lo que<br> significa que algunas máquinas pueden fallar mucho antes o durar más de 90 horas<br>
+
+
+
+```{r}
+Esperanza <- 90
+
+Esperanza
+
+Varianza <- 1/(1/90)^2
+
+Varianza
+
+Desviacion <- sqrt(Varianza)
+
+Desviacion
+```
+<br>
+<br>
+=========================================================
+<br>
+<br>
+5. En una envasadora de agua purificada se producen botellas que tienen, en promedio <br>
+750 mililitros de agua, con una desviación estándar de 8 mililitros. Si se sabe por <br>
+experiencia que la distribución de los contenidos de agua de estas botellas tiene <br>
+distribución normal. <br>
+
+En una envasadora de agua purificada<br>
+μ = 750<br>
+
+σ = 8<br>
+
+a) Determinar la probabilidad de que una botella contenga entre 742 ml y 760 ml. <br>
+
+```{r}
+#P(742<X<760)
+
+pnorm(760,mean=750,sd=8)-pnorm(742,mean=750,sd=8)
+```
+
+b) El costo de etiquetado de una botella depende de su contenido y está dado por la <br>
+variable aleatoria Y = 0.04X +2. Determine la probabilidad de que el costo de etiquetado<br> 
+sea mayor que 32.72 unidades monetarias. <br>
+
+
+```{r}
+#Y=0.04X+2
+
+#32.72=0.04X+2
+
+x <- (32.72-2)/0.04
+
+#P(X>x)
+
+1-pnorm(x,mean=750,sd=8)
+```
+
+c) Si el 5.26 % de las botellas tienen un contenido mayor que x0 mililitros, determine el<br> 
+valor de x0. <br>
+
+```{r}
+#P(X>x0)=0.0526
+
+#P(X<=x0)=0.9474
+
+z <- qnorm(0.9474)
+
+x0 <- (z*8)+750
+
+x0
+```
