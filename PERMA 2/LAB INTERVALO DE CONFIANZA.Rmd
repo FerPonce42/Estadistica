@@ -1,0 +1,29 @@
+---
+title: "INTERVALOS DE CONFIANZA"
+author: "Fernando Ponce"
+date: "2026-06-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+La empresa internacional Philips dedicada al material eléctricofabrica bombillas
+ahorradoras de luz que tienen una duracióna proximadamente distribuida de
+forma normal,con una desviación estándar de 40 horas. Si una muestra de 30
+bombillas ahorradoras tiene una duración promedio de 780horas:
+
+a. Encuentre un intervalo de confianza del 96% para la media de la población
+de todas las bombillas ahorradoras que produce la empresa Philips
+```{r}
+ma <- 780
+ds <-40
+n <- 30
+
+
+ee<- ds / sqrt(n)
+
+# METE EL LAB PORQEU ESTA CSM ESTA QUE CORRE Y NO DEJA HACER
+```
+
