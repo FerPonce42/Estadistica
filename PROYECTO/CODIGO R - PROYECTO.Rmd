@@ -1,0 +1,761 @@
+---
+title: "Correción 2"
+author: "Alexandra"
+date: "2026-06-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# Librerías necesarias
+library(readxl)
+library(dplyr)
+library(gridExtra)
+
+# 1. Importar datos
+data <- read_excel("FORM.xlsx")
+colnames(data) <- c("MarcaTemporal", "Ciclo", "Plataforma", "Frecuencia",
+                    "EjerciciosSemana", "HorasSemana", "PromedioCursos",
+                    "HorasSueno", "Desaprobado")
+```
+
+PREGUNTA 1: Ciclo académico actual
+¿En qué ciclo académico te encuentras actualmente?
+
+```{r}
+# Definir el orden correcto de los ciclos
+orden_ciclos <- c("1er ciclo", "2do ciclo", "3er ciclo", "4to ciclo",
+                  "5to ciclo", "6to ciclo", "7mo ciclo", "8vo ciclo",
+                  "9no ciclo", "10mo ciclo")
+
+# Convertir la variable en factor ordenado
+data$Ciclo <- factor(data$Ciclo, levels = orden_ciclos)
+
+# Mostrar tabla ordenada
+table(data$Ciclo)
+```
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+# Tabla de frecuencias
+frecuencia <- table(data$Ciclo)
+
+# Tabla de porcentajes
+porcentaje <- prop.table(frecuencia) * 100
+
+relativa <- prop.table(frecuencia)
+
+# Unir en una tabla
+tabla_ciclo <- data.frame(
+  Ciclo = names(frecuencia),
+  fi = as.vector(frecuencia),
+  hi = as.vector(relativa),
+  pi = round(as.vector(porcentaje), 2)
+)
+
+# Mostrar tabla
+tabla_ciclo
+```
+
+GRÁFICO:
+
+```{r}
+barras <- barplot(frecuencia,
+        main = "Distribución de estudiantes por ciclo académico",
+        ylab = "Frecuencia",
+        col  = rainbow(length(frecuencia)),
+        las  = 2,
+        ylim = c(0, max(frecuencia) * 1.15))
+
+text(x      = barras,
+     y      = as.vector(frecuencia) + max(frecuencia) * 0.05,
+     labels = as.vector(frecuencia),
+     cex    = 1.0,
+     font   = 2)
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayor cantidad de estudiantes encuestados pertenece al 1er ciclo, representando el 29% del total. Asimismo, el 5to ciclo también presenta una participación importante con el 16% de estudiantes. Por otro lado, los ciclos superiores, como el 8vo, 9no y 10mo ciclo, presentan una menor cantidad de participantes. En general, se observa una mayor concentración de estudiantes en los primeros ciclos de la carrera.
+
+
+PREGUNTA 2: Plataformas usadas
+¿Cuál es la plataforma o herramienta que usas con mayor frecuencia para practicar programación fuera de clases?
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+# Convertir a texto
+data$Plataforma <- as.character(data$Plataforma)
+
+github        <- sum(grepl("GitHub", data$Plataforma))
+youtube       <- sum(grepl("YouTube", data$Plataforma))
+ia            <- sum(grepl("ChatGPT|Claude|Copilot|IA", data$Plataforma))
+stackoverflow <- sum(grepl("Stack Overflow", data$Plataforma))
+ninguna       <- sum(grepl("Ninguna", data$Plataforma))
+
+otro <- sum(!(grepl("GitHub|YouTube|ChatGPT|Claude|Copilot|IA|Stack Overflow|Ninguna",
+                    data$Plataforma)))
+
+tabla_plataforma <- data.frame(
+  Plataforma = c("GitHub / Repositorios",
+                 "YouTube / Tutoriales",
+                 "IA (ChatGPT, Claude, Copilot...)",
+                 "Stack Overflow",
+                 "Ninguna",
+                 "Otro"),
+  fi = c(github, youtube, ia, stackoverflow, ninguna, otro)
+)
+
+tabla_plataforma$hi <- round((tabla_plataforma$fi / nrow(data)), 2)
+tabla_plataforma$pi <- round((tabla_plataforma$fi / nrow(data)) * 100, 2)
+
+tabla_plataforma
+```
+
+GRÁFICO:
+
+```{r}
+conteo <- c(ia, youtube, github, stackoverflow, otro, ninguna)
+
+etiquetas <- c("IA (ChatGPT, Claude...)",
+               "YouTube / Tutoriales",
+               "GitHub / Repositorios",
+               "Stack Overflow",
+               "Otras",
+               "Ninguna")
+
+colores <- c("#48DBFB", "#1ABC9C", "#8E44AD", "#FECA57", "#95A5A6", "#FF6B6B")
+
+par(mar = c(5, 14, 4, 2))
+
+barras2 <- barplot(conteo,
+  names.arg = etiquetas,
+  col       = colores,
+  border    = "white",
+  main      = "Distribución de las plataformas o herramientas más utilizadas",
+  xlab      = "Número de estudiantes que la mencionaron",
+  xlim      = c(0, max(conteo) * 1.25),
+  las       = 1,
+  cex.names = 0.85,
+  cex.main  = 1.0,
+  horiz     = TRUE)
+
+text(x      = conteo + max(conteo) * 0.05,
+     y      = barras2,
+     labels = conteo,
+     cex    = 1.0,
+     font   = 2)
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que las herramientas de inteligencia artificial, como ChatGPT, Claude y Copilot, son las plataformas más utilizadas por los estudiantes para practicar programación fuera de clases, alcanzando el 68% de las respuestas. Asimismo, YouTube/Tutoriales y GitHub/Repositorios también presentan una alta frecuencia de uso, evidenciando la preferencia de los estudiantes por recursos digitales interactivos y de apoyo práctico. Por otro lado, Stack Overflow, otras plataformas y la opción "Ninguna" registraron menores porcentajes de utilización.
+
+
+PREGUNTA 3: Horas de sueño
+¿Cuántas horas diarias duermes en promedio durante la semana de clases?
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+orden_sueno <- c(
+  "Menos de 5 horas",
+  "5 a 6 horas",
+  "7 a 8 horas",
+  "Más de 8 horas"
+)
+
+data$HorasSueno <- factor(data$HorasSueno, levels = orden_sueno)
+
+frecuencia_sueno <- table(data$HorasSueno)
+frecuencia_r     <- prop.table(frecuencia_sueno)
+porcentaje_sueno <- prop.table(frecuencia_sueno) * 100
+
+tabla_sueno <- data.frame(
+  HorasSueño = names(frecuencia_sueno),
+  fi = as.vector(frecuencia_sueno),
+  hi = as.vector(frecuencia_r),
+  pi = round(as.vector(porcentaje_sueno), 2)
+)
+
+tabla_sueno
+```
+
+GRÁFICO:
+
+```{r}
+par(mar = c(2, 2, 4, 12))
+
+nombres_sueno <- c(
+  "Menos de 5 horas",
+  "5 a 6 horas",
+  "7 a 8 horas",
+  "Más de 8 horas"
+)
+
+colores <- c("#FF6B6B","#8E44AD","#FECA57","#48DBFB")
+pct <- round(tabla_sueno$fi / sum(tabla_sueno$fi) * 100, 1)
+
+pie(
+  tabla_sueno$fi,
+  labels   = paste0(pct, "%"),
+  col      = colores,
+  border   = "white",
+  main     = "Horas de sueño durante semana de clases",
+  cex      = 0.9,
+  cex.main = 1.2
+)
+
+legend(
+  x      = "right",
+  legend = nombres_sueno,
+  fill   = colores,
+  border = "white",
+  bty    = "o",
+  cex    = 0.70,
+  xpd    = TRUE,
+  inset  = c(-0.25, 0)
+)
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayoría de estudiantes duerme entre 5 a 6 horas diarias durante la semana de clases, representando el 56% de los encuestados. Asimismo, el 25% indicó dormir entre 7 a 8 horas, lo que refleja un nivel de descanso más adecuado. Por otro lado, el 10% de estudiantes duerme menos de 5 horas, lo cual puede considerarse insuficiente, mientras que el 9% reporta dormir más de 8 horas. En general, se observa que la mayor parte de los estudiantes presenta hábitos de sueño moderados, aunque existe un grupo que no alcanza las horas recomendadas de descanso.
+
+
+PREGUNTA 4: Frecuencia de práctica
+¿Con qué frecuencia practicas programación fuera del horario de clases?
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+orden_frecuencia <- c(
+  "Nunca",
+  "Raramente (1 vez al mes o menos)",
+  "A veces (1 a 2 veces por semana)",
+  "Frecuentemente (3 a 4 veces por semana)",
+  "Siempre (todos los días)"
+)
+
+data$Frecuencia <- factor(data$Frecuencia, levels = orden_frecuencia)
+
+frecuencia_a <- table(data$Frecuencia)
+frecuencia_r <- prop.table(frecuencia_a)
+frecuencia_p <- prop.table(frecuencia_a) * 100
+
+tabla_practica <- data.frame(
+  Frecuencia = names(frecuencia_a),
+  fi = as.vector(frecuencia_a),
+  hi = as.vector(frecuencia_r),
+  pi = round(as.vector(frecuencia_p), 2)
+)
+
+tabla_practica
+```
+
+GRÁFICO:
+
+```{r}
+nombres_frecuencia <- c(
+  "Nunca",
+  "Raramente (1 vez al mes o menos)",
+  "A veces (1 a 2 veces por semana)",
+  "Frecuentemente (3 a 4 veces por semana)",
+  "Siempre (todos los días)"
+)
+
+colores <- c("#FF6B6B","#FF9F43","#FECA57","#48DBFB","#1DD1A1")
+
+par(mar = c(5, 16, 4, 2))
+
+barras4 <- barplot(tabla_practica$fi,
+  names.arg = nombres_frecuencia,
+  col       = colores,
+  border    = "white",
+  main      = "Frecuencia de práctica de programación fuera de clases",
+  xlab      = "Número de estudiantes",
+  xlim      = c(0, max(tabla_practica$fi) * 1.25),
+  las       = 1,
+  cex.names = 0.80,
+  cex.main  = 0.95,
+  horiz     = TRUE)
+
+text(x      = tabla_practica$fi + max(tabla_practica$fi) * 0.05,
+     y      = barras4,
+     labels = tabla_practica$fi,
+     cex    = 1.0,
+     font   = 2)
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayoría de estudiantes practica programación fuera del horario de clases entre una y dos veces por semana, representando el 46% de los encuestados. Asimismo, el 25% indicó practicar frecuentemente entre tres y cuatro veces por semana. Por otro lado, pocos estudiantes señalaron nunca practicar programación o hacerlo todos los días. En general, se observa que la práctica extracurricular de programación es moderada y constante entre la mayoría de estudiantes.
+
+
+PREGUNTA 5: N° de ejercicios/semana
+¿Cuántos ejercicios o problemas de programación resuelves aproximadamente por semana fuera de clases?
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+data$EjerciciosSemana <- as.numeric(data$EjerciciosSemana)
+a     <- min(data$EjerciciosSemana, na.rm = TRUE)
+b     <- max(data$EjerciciosSemana, na.rm = TRUE)
+rango <- b - a
+
+k   <- round(1 + 3.3 * log10(length(data$EjerciciosSemana)), 0)
+Amp <- round(rango / k, 0)
+if (Amp == 0) Amp <- 1
+
+intervalos <- seq(a, b, by = Amp)
+if (max(intervalos) < b) intervalos <- c(intervalos, max(intervalos) + Amp)
+
+cortes_ej <- cut(data$EjerciciosSemana,
+                 breaks         = intervalos,
+                 include.lowest = TRUE,
+                 right          = FALSE)
+
+fi_ej <- as.vector(table(cortes_ej))
+ni_ej <- sum(fi_ej)
+
+tabla_ejercicios <- data.frame(
+  Intervalo = names(table(cortes_ej)),
+  fi        = fi_ej,
+  hi        = round(fi_ej / ni_ej, 2),
+  pi        = round(fi_ej / ni_ej * 100, 2),
+  Fi        = cumsum(fi_ej),
+  Hi        = round(cumsum(fi_ej) / ni_ej, 2),
+  Pi        = round(cumsum(fi_ej) / ni_ej * 100, 2)
+)
+
+tabla_ejercicios
+```
+
+GRÁFICO:
+
+```{r}
+par(mfrow = c(1, 2))
+
+# Polígono de frecuencias
+intervalos_p5 <- c(0, 6, 12, 18, 24, 30, 36, 42, 48, 54)
+fi_ej         <- tabla_ejercicios$fi
+puntos_medios <- (intervalos_p5[-length(intervalos_p5)] + intervalos_p5[-1]) / 2
+puntos_ext    <- c(min(puntos_medios) - diff(puntos_medios)[1],
+                   puntos_medios,
+                   max(puntos_medios) + diff(puntos_medios)[1])
+fi_ext        <- c(0, fi_ej, 0)
+
+plot(puntos_ext, fi_ext,
+     type   = "o",
+     col    = "#48DBFB",
+     lwd    = 2,
+     pch    = 16,
+     main   = "Polígono de frecuencias\nejercicos por semana",
+     xlab   = "Ejercicios por semana",
+     ylab   = "Frecuencia",
+     xaxt   = "n")
+axis(1, at = puntos_medios, labels = puntos_medios)
+grid(col = "gray", lty = "dotted")
+
+# Boxplot
+boxplot(data$EjerciciosSemana,
+        col        = "#48DBFB",
+        border     = "#2C3E50",
+        main       = "Boxplot\nejercicos por semana",
+        xlab       = "Ejercicios por semana",
+        outcol     = "#FF6B6B",
+        outpch     = 16,
+        horizontal = TRUE)
+
+par(mfrow = c(1, 1))
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayoría de estudiantes resuelve entre 1 y 6 ejercicios de programación por semana fuera del horario de clases, siendo 2 ejercicios la cantidad más frecuente entre los encuestados. Asimismo, algunos estudiantes reportaron resolver cantidades mayores, como 10, 20 e incluso 50 ejercicios semanales, aunque estos casos representan una minoría. En general, se observa que la mayoría de estudiantes mantiene una práctica constante de ejercicios de programación como complemento a su aprendizaje académico.
+
+
+PREGUNTA 6: Horas de práctica/semana
+¿Cuántas horas a la semana dedicas a practicar programación fuera del horario de clases? (En decimal: 2.0 / 1.5, etc)
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+data$HorasSemana <- as.numeric(data$HorasSemana)
+
+a     <- min(data$HorasSemana, na.rm = TRUE)
+b     <- max(data$HorasSemana, na.rm = TRUE)
+rango <- b - a
+
+k   <- round(1 + 3.3 * log10(length(data$HorasSemana)), 0)
+Amp <- round(rango / k, 0)
+if (Amp == 0) Amp <- 1
+
+intervalos <- seq(a, b, by = Amp)
+if (max(intervalos) < b) intervalos <- c(intervalos, max(intervalos) + Amp)
+
+cortes5 <- cut(data$HorasSemana,
+               breaks         = intervalos,
+               include.lowest = TRUE,
+               right          = FALSE)
+
+fi5 <- as.vector(table(cortes5))
+ni5 <- sum(fi5)
+
+tabla_horas <- data.frame(
+  Intervalo = names(table(cortes5)),
+  fi        = fi5,
+  hi        = round(fi5 / ni5, 2),
+  pi        = round(fi5 / ni5 * 100, 2),
+  Fi        = cumsum(fi5),
+  Hi        = round(cumsum(fi5) / ni5, 2),
+  Pi        = round(cumsum(fi5) / ni5 * 100, 2)
+)
+
+tabla_horas
+```
+
+GRÁFICO:
+
+```{r}
+par(mfrow = c(1, 2))
+
+# Histograma
+histograma5 <- hist(data$HorasSemana,
+                    breaks = intervalos,
+                    right  = FALSE,
+                    plot   = FALSE)
+
+hist(data$HorasSemana,
+     breaks = intervalos,
+     right  = FALSE,
+     col    = "#48DBFB",
+     border = "black",
+     main   = "Horas semanales\nde práctica",
+     xlab   = "Horas por semana",
+     ylab   = "Número de estudiantes",
+     xlim   = c(0, max(intervalos)),
+     ylim   = c(0, max(histograma5$counts) * 1.15),
+     xaxt   = "n")
+
+axis(1, at = intervalos)
+
+text(x      = histograma5$mids,
+     y      = histograma5$counts,
+     labels = histograma5$counts,
+     pos    = 3,
+     col    = "black",
+     cex    = 0.8)
+
+# Boxplot
+boxplot(data$HorasSemana,
+        col        = "#48DBFB",
+        border     = "#2C3E50",
+        main       = "Boxplot\nhoras por semana",
+        xlab       = "Horas por semana",
+        outcol     = "#FF6B6B",
+        outpch     = 16,
+        horizontal = TRUE)
+
+par(mfrow = c(1, 1))
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayoría de estudiantes dedica entre 1 y 4 horas semanales a practicar programación fuera del horario de clases, siendo 2 horas la cantidad más frecuente. Asimismo, un grupo menor de estudiantes reporta dedicar entre 5 y 10 horas semanales, mientras que pocos casos indican valores más altos como 12, 14, 15 o 16 horas. En general, se observa una distribución concentrada en valores bajos a moderados, lo que evidencia que la mayoría de estudiantes realiza una práctica semanal limitada pero constante de programación.
+
+
+PREGUNTA 7: Rango de promedio
+¿En qué rango se encuentra tu promedio aproximado en los cursos de programación que has llevado hasta ahora en la carrera? (Considera cursos como Introducción a Computación, POO, Algoritmos y Estructuras de Datos, etc.)
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+orden_promedio <- c(
+  "Menos de 11",
+  "11 a 13",
+  "14 a 16",
+  "17 a 20"
+)
+
+data$PromedioCursos <- factor(data$PromedioCursos, levels = orden_promedio)
+
+frecuencia_promedio <- table(data$PromedioCursos)
+frecuencia_r        <- prop.table(frecuencia_promedio)
+porcentaje_promedio <- prop.table(frecuencia_promedio) * 100
+
+tabla_promedio <- data.frame(
+  Rango = names(frecuencia_promedio),
+  fi = as.vector(frecuencia_promedio),
+  hi = as.vector(frecuencia_r),
+  pi = round(as.vector(porcentaje_promedio), 2)
+)
+
+tabla_promedio
+```
+
+GRÁFICO:
+
+```{r}
+colores <- c("#FF6B6B","#8E44AD","#FECA57","#48DBFB","#1DD1A1")
+
+barras <- barplot(tabla_promedio$fi,
+        names.arg = tabla_promedio$Rango,
+        main      = "Promedio en cursos de programación",
+        xlab      = "Rango de promedio",
+        ylab      = "Cantidad de estudiantes",
+        col       = colores,
+        ylim      = c(0, max(tabla_promedio$fi) * 1.15))
+
+text(x      = barras,
+     y      = tabla_promedio$fi + max(tabla_promedio$fi) * 0.05,
+     labels = tabla_promedio$fi,
+     cex    = 1.0,
+     font   = 2)
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayoría de estudiantes se encuentra en el rango de 11 a 13 de promedio en los cursos de programación, representando el 36% de los encuestados. Asimismo, un 33% se ubica entre 14 y 16, lo que indica un rendimiento intermedio-alto en la carrera. Por otro lado, el 16% obtuvo promedios menores a 11, mientras que el 15% alcanzó notas entre 17 y 20. En general, se observa una distribución equilibrada, con mayor concentración en niveles medios de rendimiento académico.
+
+
+PREGUNTA 8: Desaprobación de curso
+¿Has desaprobado algún curso de programación durante tu carrera?
+
+TABLA DE FRECUENCIAS:
+
+```{r}
+conteo_desaprobado <- table(factor(data$Desaprobado, levels = c("No", "Sí")))
+
+tabla_desaprobado <- data.frame(
+  Categoria = names(conteo_desaprobado),
+  fi        = as.vector(conteo_desaprobado),
+  hi        = round(as.vector(conteo_desaprobado) / sum(conteo_desaprobado), 2),
+  pi        = round(as.vector(conteo_desaprobado) / sum(conteo_desaprobado) * 100, 2)
+)
+
+tabla_desaprobado
+```
+
+GRÁFICO:
+
+```{r}
+pct <- round(tabla_desaprobado$fi / sum(tabla_desaprobado$fi) * 100, 1)
+
+par(mar = c(2, 2, 4, 10))
+
+colores <- c("#FF6B6B","#48DBFB")
+
+pie(
+  tabla_desaprobado$fi,
+  labels   = paste0(pct, "%"),
+  col      = colores,
+  border   = "white",
+  main     = "¿Has desaprobado algún curso de programación?",
+  cex      = 0.9,
+  cex.main = 1.0
+)
+
+legend(
+  x      = "right",
+  legend = tabla_desaprobado$Categoria,
+  fill   = colores,
+  border = "white",
+  bty    = "o",
+  cex    = 0.80,
+  xpd    = TRUE,
+  inset  = c(-0.35, 0)
+)
+```
+
+CONCLUSIÓN:
+
+Los resultados muestran que la mayoría de estudiantes no ha desaprobado cursos de programación durante su carrera. Sin embargo, un porcentaje considerable indicó haber desaprobado al menos un curso, lo que evidencia que las asignaturas de programación representan un desafío académico importante para muchos estudiantes.
+
+
+```{r}
+# ── EXPORTAR GRÁFICOS A PNG ──────────────────────────────────────────────────
+
+# P1
+png("P1.png", width = 800, height = 500)
+barras <- barplot(frecuencia,
+        main = "Distribución de estudiantes por ciclo académico",
+        ylab = "Frecuencia",
+        col  = rainbow(length(frecuencia)),
+        las  = 2,
+        ylim = c(0, max(frecuencia) * 1.15))
+text(x = barras, y = as.vector(frecuencia) + max(frecuencia) * 0.05,
+     labels = as.vector(frecuencia), cex = 1.0, font = 2)
+dev.off()
+
+# P2
+png("P2.png", width = 800, height = 500)
+conteo <- c(ia, youtube, github, stackoverflow, otro, ninguna)
+etiquetas <- c("IA (ChatGPT, Claude...)", "YouTube / Tutoriales",
+               "GitHub / Repositorios", "Stack Overflow", "Otras", "Ninguna")
+colores <- c("#48DBFB", "#1ABC9C", "#8E44AD", "#FECA57", "#95A5A6", "#FF6B6B")
+par(mar = c(5, 14, 4, 2))
+barras2 <- barplot(conteo, names.arg = etiquetas, col = colores, border = "white",
+  main = "Distribución de las plataformas o herramientas más utilizadas",
+  xlab = "Número de estudiantes que la mencionaron",
+  xlim = c(0, max(conteo) * 1.25), las = 1, cex.names = 0.85, horiz = TRUE)
+text(x = conteo + max(conteo) * 0.05, y = barras2,
+     labels = conteo, cex = 1.0, font = 2)
+dev.off()
+
+# P3
+png("P3.png", width = 600, height = 500)
+par(mar = c(2, 2, 4, 12))
+colores <- c("#FF6B6B","#8E44AD","#FECA57","#48DBFB")
+pct <- round(tabla_sueno$fi / sum(tabla_sueno$fi) * 100, 1)
+pie(tabla_sueno$fi, labels = paste0(pct, "%"), col = colores, border = "white",
+    main = "Horas de sueño durante semana de clases", cex = 0.9, cex.main = 1.2)
+legend(x = "right", legend = nombres_sueno, fill = colores, border = "white",
+       bty = "o", cex = 0.70, xpd = TRUE, inset = c(-0.25, 0))
+dev.off()
+
+# P4
+png("P4.png", width = 750, height = 500)
+colores <- c("#FF6B6B","#FF9F43","#FECA57","#48DBFB","#1DD1A1")
+par(mar = c(5, 16, 4, 2))
+barras4 <- barplot(tabla_practica$fi, names.arg = nombres_frecuencia,
+  col = colores, border = "white",
+  main = "Frecuencia de práctica de programación fuera de clases",
+  xlab = "Número de estudiantes",
+  xlim = c(0, max(tabla_practica$fi) * 1.25),
+  las = 1, cex.names = 0.80, cex.main = 0.95, horiz = TRUE)
+text(x = tabla_practica$fi + max(tabla_practica$fi) * 0.05, y = barras4,
+     labels = tabla_practica$fi, cex = 1.0, font = 2)
+dev.off()
+
+# P5_01 - Polígono de frecuencias
+png("P5_01.png", width = 800, height = 500)
+intervalos_p5 <- c(0, 6, 12, 18, 24, 30, 36, 42, 48, 54)
+fi_ej         <- tabla_ejercicios$fi
+puntos_medios <- (intervalos_p5[-length(intervalos_p5)] + intervalos_p5[-1]) / 2
+puntos_ext    <- c(min(puntos_medios) - diff(puntos_medios)[1],
+                   puntos_medios,
+                   max(puntos_medios) + diff(puntos_medios)[1])
+fi_ext <- c(0, fi_ej, 0)
+plot(puntos_ext, fi_ext, type = "o", col = "#48DBFB", lwd = 2, pch = 16,
+     main = "Polígono de frecuencias de ejercicios por semana",
+     xlab = "Ejercicios por semana", ylab = "Frecuencia", xaxt = "n")
+axis(1, at = puntos_medios, labels = puntos_medios)
+grid(col = "gray", lty = "dotted")
+dev.off()
+
+# P5_02 - Boxplot horizontal
+png("P5_02.png", width = 800, height = 400)
+boxplot(data$EjerciciosSemana,
+        col        = "#48DBFB",
+        border     = "#2C3E50",
+        main       = "Boxplot de ejercicios por semana",
+        xlab       = "Ejercicios por semana",
+        outcol     = "#FF6B6B",
+        outpch     = 16,
+        horizontal = TRUE)
+dev.off()
+
+# P6_01 - Histograma
+png("P6_01.png", width = 800, height = 500)
+histograma5 <- hist(data$HorasSemana, breaks = intervalos, right = FALSE, plot = FALSE)
+hist(data$HorasSemana, breaks = intervalos, right = FALSE, col = "#48DBFB", border = "black",
+     main = "Distribución de horas semanales de práctica",
+     xlab = "Horas por semana", ylab = "Número de estudiantes",
+     xlim = c(0, max(intervalos)), ylim = c(0, max(histograma5$counts) * 1.15), xaxt = "n")
+axis(1, at = intervalos)
+text(x = histograma5$mids, y = histograma5$counts, labels = histograma5$counts,
+     pos = 3, col = "black", cex = 0.8)
+dev.off()
+
+# P6_02 - Boxplot horizontal
+png("P6_02.png", width = 800, height = 400)
+boxplot(data$HorasSemana,
+        col        = "#48DBFB",
+        border     = "#2C3E50",
+        main       = "Boxplot de horas semanales de práctica",
+        xlab       = "Horas por semana",
+        outcol     = "#FF6B6B",
+        outpch     = 16,
+        horizontal = TRUE)
+dev.off()
+
+# P7
+png("P7.png", width = 700, height = 500)
+colores <- c("#FF6B6B","#8E44AD","#FECA57","#48DBFB","#1DD1A1")
+barras <- barplot(tabla_promedio$fi, names.arg = tabla_promedio$Rango,
+        main = "Promedio en cursos de programación",
+        xlab = "Rango de promedio", ylab = "Cantidad de estudiantes",
+        col = colores, ylim = c(0, max(tabla_promedio$fi) * 1.15))
+text(x = barras, y = tabla_promedio$fi + max(tabla_promedio$fi) * 0.05,
+     labels = tabla_promedio$fi, cex = 1.0, font = 2)
+dev.off()
+
+# P8
+png("P8.png", width = 600, height = 500)
+par(mar = c(2, 2, 4, 10))
+colores <- c("#FF6B6B","#48DBFB")
+pct <- round(tabla_desaprobado$fi / sum(tabla_desaprobado$fi) * 100, 1)
+pie(tabla_desaprobado$fi, labels = paste0(pct, "%"), col = colores, border = "white",
+    main = "¿Has desaprobado algún curso de programación?", cex = 0.9, cex.main = 1.0)
+legend(x = "right", legend = tabla_desaprobado$Categoria, fill = colores, border = "white",
+       bty = "o", cex = 0.80, xpd = TRUE, inset = c(-0.35, 0))
+dev.off()
+
+
+```
+
+
+```{r}
+
+library(gridExtra)
+library(grid)
+# ── EXPORTAR TABLAS A PNG ──────────────────────────────────────────────────
+
+# T1 - tabla_ciclo
+png("T1.png", width = 600, height = 400)
+grid.table(tabla_ciclo)
+dev.off()
+
+# T2 - tabla_plataforma
+png("T2.png", width = 700, height = 400)
+grid.table(tabla_plataforma)
+dev.off()
+
+# T3 - tabla_sueno
+png("T3.png", width = 600, height = 300)
+grid.table(tabla_sueno)
+dev.off()
+
+# T4 - tabla_practica
+png("T4.png", width = 700, height = 350)
+grid.table(tabla_practica)
+dev.off()
+
+# T5 - tabla_ejercicios
+png("T5.png", width = 700, height = 400)
+grid.table(tabla_ejercicios)
+dev.off()
+
+# T6 - tabla_horas
+png("T6.png", width = 700, height = 400)
+grid.table(tabla_horas)
+dev.off()
+
+# T7 - tabla_promedio
+png("T7.png", width = 600, height = 300)
+grid.table(tabla_promedio)
+dev.off()
+
+# T8 - tabla_desaprobado
+png("T8.png", width = 500, height = 200)
+grid.table(tabla_desaprobado)
+dev.off()
+```
+
